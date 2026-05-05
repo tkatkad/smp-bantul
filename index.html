@@ -8,62 +8,39 @@
   <style>
     * { box-sizing: border-box; }
     body {
-      font-family: Arial, sans-serif;
-      font-size: 16px;
-      line-height: 1.5;
-      background: #f0f7ff;
-      color: #111;
-      padding: 1rem;
-      margin: 0 auto;
-      max-width: 520px;
+      font-family: Arial, sans-serif; font-size: 16px; line-height: 1.5;
+      background: #f0f7ff; color: #111; padding: 1rem; margin: 0 auto; max-width: 520px;
     }
     h1, h2, h3 { text-align: center; color: #0d47a1; margin: 0.5rem 0; }
-    h1 { font-size: 1.4rem; }
-    h2 { font-size: 1.2rem; }
+    h1 { font-size: 1.4rem; } h2 { font-size: 1.2rem; }
     
     .toggle-box {
-      text-align: center;
-      margin: 1rem 0;
-      padding: 0.75rem;
-      background: #e3f2fd;
-      border-radius: 8px;
-      border: 1px solid #bbdefb;
+      text-align: center; margin: 1rem 0; padding: 0.75rem;
+      background: #e3f2fd; border-radius: 8px; border: 1px solid #bbdefb;
     }
     .toggle-box label {
-      margin: 0 0.75rem;
-      font-weight: normal;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
+      margin: 0 0.75rem; font-weight: normal; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 0.3rem;
     }
-    .toggle-box input[type="radio"], .toggle-box input[type="checkbox"] {
-      transform: scale(1.2);
-      cursor: pointer;
-    }
+    .toggle-box input[type="radio"] { transform: scale(1.2); cursor: pointer; }
     .badge {
-      display: inline-block;
-      padding: 0.15rem 0.4rem;
-      background: #1565c0;
-      color: white;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: bold;
+      display: inline-block; padding: 0.15rem 0.4rem; background: #1565c0;
+      color: white; border-radius: 4px; font-size: 11px; font-weight: bold;
     }
     
     label { display: block; margin-top: 1rem; font-weight: bold; color: #0d47a1; }
     .section-label {
-      margin-top: 1.5rem; margin-bottom: 0.5rem;
-      font-size: 1.1rem; border-bottom: 2px solid #1565c0; padding-bottom: 0.3rem;
+      margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.1rem;
+      border-bottom: 2px solid #1565c0; padding-bottom: 0.3rem;
     }
     
     input[type="number"] {
       width: 100%; padding: 10px; font-size: 18px; margin-top: 0.25rem;
-      border: 2px solid #ccc; border-radius: 6px; background-color: #fff; text-align: center;
+      border: 2px solid #ccc; border-radius: 6px; background: #fff; text-align: center;
     }
-    input[type="number"]:focus { border-color: #1565c0; background-color: #e8f4fd; outline: none; }
+    input[type="number"]:focus { border-color: #1565c0; background: #e8f4fd; outline: none; }
     input[type="number"].error { border-color: #dc3545; animation: shake 0.3s; }
-    input[type="number"].required-empty { border-color: #dc3545; background-color: #fff5f5; }
+    input[type="number"].required-empty { border-color: #dc3545; background: #fff5f5; }
     @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
     
     .semester-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-top: 0.5rem; }
@@ -83,10 +60,19 @@
     
     .section { background: #fff; padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     
-    .result { margin-top: 1.5rem; padding: 1rem; font-size: 18px; border-radius: 10px; background-color: #e8f4fd; border: 2px solid #1565c0; }
+    .result {
+      margin-top: 1.5rem; padding: 1rem; font-size: 18px; border-radius: 10px;
+      background: #e8f4fd; border: 2px solid #1565c0;
+    }
     .result strong { color: #0d47a1; }
-    .result .final { font-size: 1.3rem; color: #0d47a1; display: block; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 2px dashed #1565c0; }
-    .result .error-msg { color: #dc3545; font-weight: bold; padding: 0.5rem; background: #fff5f5; border-radius: 6px; border-left: 4px solid #dc3545; }
+    .result .final {
+      font-size: 1.3rem; color: #0d47a1; display: block; margin-top: 0.5rem;
+      padding-top: 0.5rem; border-top: 2px dashed #1565c0;
+    }
+    .result .error-msg {
+      color: #dc3545; font-weight: bold; padding: 0.5rem; background: #fff5f5;
+      border-radius: 6px; border-left: 4px solid #dc3545;
+    }
     
     .formula-box {
       font-size: 13px; color: #555; background: #f8f9fa; padding: 0.75rem; border-radius: 6px; margin: 1rem 0;
@@ -95,17 +81,15 @@
     
     button {
       font-size: 18px; padding: 12px 20px; margin-top: 1rem; border: none; border-radius: 8px;
-      cursor: pointer; width: 100%; background: #1565c0; color: white; font-weight: bold; transition: background 0.2s ease;
+      cursor: pointer; width: 100%; background: #1565c0; color: white; font-weight: bold; transition: 0.2s;
     }
-    button:hover { background-color: #0d47a1; }
+    button:hover { background: #0d47a1; }
     button:active { transform: scale(0.99); }
-    button.secondary { background-color: #e0e0e0; color: #333; font-weight: normal; }
-    button.secondary:hover { background-color: #ccc; }
+    button.secondary { background: #e0e0e0; color: #333; font-weight: normal; }
+    button.secondary:hover { background: #ccc; }
     
-    /* Share Section */
     .share-section {
-      margin-top: 1.5rem; padding: 1rem;
-      background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+      margin-top: 1.5rem; padding: 1rem; background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
       border-radius: 10px; color: white; box-shadow: 0 4px 6px rgba(37,211,102,0.3);
     }
     .share-section h3 { color: white; margin-top: 0; font-size: 1.1rem; }
@@ -113,7 +97,7 @@
     .share-btn, .copy-btn {
       display: flex; align-items: center; justify-content: center; gap: 0.5rem;
       padding: 12px; border: 2px solid white; background: white; color: #25D366;
-      font-weight: bold; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 16px; text-decoration: none; width: 100%;
+      font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.2s; font-size: 16px; text-decoration: none; width: 100%;
     }
     .share-btn:hover, .copy-btn:hover { background: #f0fff4; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
     .share-btn.secondary { background: rgba(255,255,255,0.2); color: white; border-color: rgba(255,255,255,0.5); }
@@ -130,8 +114,7 @@
     .short-url-display.show { display: block; }
     
     .flash { animation: flashHighlight 1s ease-in-out; }
-    @keyframes flashHighlight { 0%{background-color:#fff3cd} 50%{background-color:#ffeeba} 100%{background-color:#e8f4fd} }
-    .hidden { display: none; }
+    @keyframes flashHighlight { 0%{background:#fff3cd} 50%{background:#ffeeba} 100%{background:#e8f4fd} }
     .helper-text { font-size: 12px; color: #666; margin-top: 0.25rem; display: block; }
     .required-hint { font-size: 11px; color: #dc3545; margin-top: 0.2rem; display: none; }
     .required-hint.show { display: block; }
@@ -158,34 +141,25 @@
   <h1>🎓 Simulasi SPMB SMP</h1>
   <h2>Kabupaten Bantul 2026</h2>
 
-  <!-- Toggle Tahun -->
   <div class="toggle-box">
     <strong>Tahun Kelulusan:</strong><br>
     <label><input type="radio" name="tahun" value="2026" checked onchange="updateFormula()"> 2026 <span class="badge">Aktif</span></label>
     <label><input type="radio" name="tahun" value="sebelum" onchange="updateFormula()"> Sebelum 2026</label>
   </div>
 
-  <!-- Toggle Jalur -->
   <div class="toggle-box" style="background:#e8f5e9; border-color:#c8e6c9;">
     <strong>Jalur Pendaftaran:</strong><br>
-    <label style="margin-right:1rem;">
-      <input type="radio" name="jalur" value="domisili" checked onchange="toggleJalur()"> 
-      🏠 Domisili Wilayah
-    </label>
-    <label>
-      <input type="radio" name="jalur" value="prestasi" onchange="toggleJalur()"> 
-      🏆 Prestasi Umum
-    </label>
+    <label style="margin-right:1rem;"><input type="radio" name="jalur" value="domisili" checked onchange="toggleJalur()"> 🏠 Domisili Wilayah</label>
+    <label><input type="radio" name="jalur" value="prestasi" onchange="toggleJalur()"> 🏆 Prestasi Umum</label>
   </div>
 
   <div class="formula-box" id="formula-info">
-    📐 <strong>Rumus Juknis 226/2026:</strong><br>
+    📐 <strong>Rumus Juknis 2026:</strong><br>
     NG = (20% × Rerata Rapor) + (50% × TKA) + (30% × TKAD)<br>
-    <small style="color:#666">NA = NG + Nilai Prestasi (hanya untuk Jalur Prestasi)</small>
+    <small style="color:#666">NA = NG + Nilai Prestasi (khusus Jalur Prestasi)</small>
   </div>
 
   <form id="form">
-    <!-- === KOMPONEN TES === -->
     <div class="section">
       <h3 class="section-label">📝 Nilai Tes Akademik</h3>
       <label>Rerata Nilai TKA (0-100):</label>
@@ -199,18 +173,16 @@
       <span class="required-hint" id="tes-required">⚠️ Semua field tes wajib diisi</span>
     </div>
 
-    <!-- === NILAI RAPOR (3 Mapel × 5 Sem = 15) === -->
     <div class="section" id="rapor-section">
       <h3 class="section-label">📚 Nilai Rapor (5 Semester)</h3>
       <p style="font-size:13px;color:#666;margin:0 0 1rem 0">
-        Isi nilai pengetahuan Kelas 4-6 (15 kolom). 
+        Isi nilai B. Indo, MTK, IPA Kelas 4-6 (15 kolom). 
         <strong>Wajib diisi | Maksimal: 100 per input</strong>
       </p>
       <div id="rapor-inputs"></div>
       <span class="required-hint" id="rapor-required">⚠️ Semua field rapor wajib diisi</span>
     </div>
 
-    <!-- === PRESTASI === -->
     <div class="section" id="prestasi-section">
       <h3 class="section-label">🏆 Tambahan Nilai Prestasi</h3>
       <label>Nilai Prestasi (Opsional):</label>
@@ -225,7 +197,6 @@
       <em>Hasil perhitungan akan muncul di sini.</em>
     </div>
 
-    <!-- === SHARE & COPY === -->
     <div class="share-section">
       <h3>📤 Bagikan Hasil</h3>
       <div class="share-buttons">
@@ -248,7 +219,7 @@
   </a>
 
 <script>
-// ================= KONFIGURASI BANTUL (Juknis 226/2026) =================
+// ================= KONFIGURASI BANTUL (Juknis 2026) =================
 const CONFIG = {
   WEIGHT_RAPOR: 0.2, WEIGHT_TKA: 0.5, WEIGHT_TKAD: 0.3,
   MAX_INPUT: 100, MAX_PRESTASI: 15,
@@ -276,11 +247,18 @@ function toast(msg, dur=2000) {
 function showHint(id, show) { const e=document.getElementById(id); if(e) e.classList.toggle('show', show); }
 function markReq(id, mark) { const e=document.getElementById(id); if(e) e.classList.toggle('required-empty', mark); }
 
-// ================= POP-UNDER =================
+// ================= POP-UNDER & CLICK HANDLER =================
 function openPop() {
-  if(!popUnderOpened) { popUnderOpened=true; const t=window.open(CONFIG.AFFILIATE_URL,'_blank','noopener'); if(t) setTimeout(()=>{t.blur();window.focus()},100); }
+  if(!popUnderOpened) { 
+    popUnderOpened=true; 
+    const t=window.open(CONFIG.AFFILIATE_URL,'_blank','noopener'); 
+    if(t) setTimeout(()=>{t.blur();window.focus()},100); 
+  }
 }
-function handleClick() { clickCount++; if(clickCount===CONFIG.CLICK_THRESHOLD) openPop(); }
+function handleUserClick() { 
+  clickCount++; 
+  if(clickCount===CONFIG.CLICK_THRESHOLD) openPop(); 
+}
 
 // ================= RENDER INPUTS =================
 function renderRapor() {
@@ -338,7 +316,7 @@ function serialize() {
 function deserialize(code) { try { return JSON.parse(fromB64(code)); } catch(e) { return null; } }
 
 function makeLink() { return `${window.location.origin}${window.location.pathname}?v=${serialize()}`; }
-async function copyLink() {
+async function copyShortLink() {
   const btn=document.getElementById('copyBtn'), txt=document.getElementById('copyText'), disp=document.getElementById('shortUrlDisplay');
   if(!lastShortLink) lastShortLink=makeLink();
   try { await navigator.clipboard.writeText(lastShortLink); btn.classList.add('copied'); txt.textContent='✅ Tersalin!'; disp.textContent=lastShortLink; disp.classList.add('show'); toast('📋 Link disalin!'); setTimeout(()=>{btn.classList.remove('copied');txt.textContent='Salin Link Pendek';},2000); }
@@ -348,8 +326,8 @@ async function copyLink() {
 function loadFromURL() {
   const v=new URLSearchParams(window.location.search).get('v'); if(!v) return false;
   const d=deserialize(v); if(!d) { toast('⚠️ Link rusak'); return false; }
-  if(d.tahun) { document.querySelector(`input[name="tahun"][value="${d.tahun}"]`)?.click(); }
-  if(d.jalur) { document.querySelector(`input[name="jalur"][value="${d.jalur}"]`)?.click(); }
+  if(d.tahun) document.querySelector(`input[name="tahun"][value="${d.tahun}"]`)?.click();
+  if(d.jalur) document.querySelector(`input[name="jalur"][value="${d.jalur}"]`)?.click();
   if(d.tka!==null) document.getElementById('tka').value=d.tka;
   if(d.tkad!==null) document.getElementById('tkad').value=d.tkad;
   if(d.prestasi!==null) document.getElementById('prestasi').value=d.prestasi;
@@ -388,10 +366,10 @@ function hitung() {
   // 2. Ambil Tes
   const tka = getVal('tka'), tkad = getVal('tkad');
 
-  // 3. Hitung NG (Juknis 226/2026)
+  // 3. Hitung NG (Juknis 2026)
   const NG = (rerataRapor * CONFIG.WEIGHT_RAPOR) + (tka * CONFIG.WEIGHT_TKA) + (tkad * CONFIG.WEIGHT_TKAD);
 
-  // 4. Hitung NA (hanya tambah prestasi jika jalur Prestasi)
+  // 4. Hitung NA
   let prestasi = jalurAktif==='prestasi' ? (getVal('prestasi')||0) : 0;
   if(prestasi > CONFIG.MAX_PRESTASI) prestasi = CONFIG.MAX_PRESTASI;
   const NA = NG + prestasi;
@@ -437,10 +415,11 @@ function resetForm() {
 }
 
 // ================= SHARE WA =================
-function shareWA(mode) {
+function shareToWhatsApp(mode) {
   let msg='', url=lastShortLink||makeLink();
   if(mode==='withValues') {
-    const out=document.getElementById('hasil'); const ng=out?.textContent?.match(/NG:\s*([\d.]+)/)?.[1]||'0';
+    const out=document.getElementById('hasil'); 
+    const ng=out?.textContent?.match(/NG:\s*([\d.]+)/)?.[1]||'0';
     const na=out?.textContent?.match(/NA:\s*([\d.]+)/)?.[1]||'0';
     const final=out?.textContent?.match(/SELEKSI:\s*([\d.]+)/)?.[1]||'0';
     msg=`🎓 *Simulasi SPMB Bantul 2026*\n*Jalur: ${jalurAktif==='prestasi'?'Prestasi':'Domisili'}*\n\nNG: ${ng}\n${jalurAktif==='prestasi'?'NA: '+na+'\n':''}\n🎯 Nilai: ${final}\n\n💡 Cek di: ${url}`;
@@ -464,11 +443,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-  <!-- Footer -->
   <div style="margin-top:2em;padding:1em;background:#e3f2fd;border-top:2px solid #90caf9;border-radius:10px;">
     <h3 style="margin-top:0">📞 Kontak Dinas Pendidikan Bantul</h3>
     <p style="margin:0.3rem 0"><strong>Alamat:</strong> Jl. Parangtritis KM 13, Sabdodadi, Bantul</p>
-    <p style="margin:0.3rem 0"><strong>Telp:</strong> (0274) 367367 | <strong>WA:</strong> 0812-2733-XXXX</p>
     <p style="margin:0.3rem 0"><strong>Website:</strong> <a href="https://dikmenbud.bantulkab.go.id" target="_blank">dikmenbud.bantulkab.go.id</a></p>
     <br><strong>⏰ Layanan:</strong> Senin-Jumat: 08.00-15.00 WIB
   </div>
