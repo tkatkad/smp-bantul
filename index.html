@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22>
-    <circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%231565c0%22/><text y=%22.9em%22 x=%2250%25%22 font-family=%22Arial%22 font-weight=%22bold%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22white%22>TKA</text></svg>">
+  <link rel="icon" href="image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%231565c0%22/><text y=%22.9em%22 x=%2250%25%22 font-family=%22Arial%22 font-weight=%22bold%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22white%22>BTL</text></svg>">
   <title>Kalkulator SPMB SMP 2026 - Kabupaten Bantul</title>
   <style>
     * { box-sizing: border-box; }
@@ -140,7 +139,7 @@
 <body>
 
   <h1>🎓 Simulasi SPMB SMP</h1>
-  <h2>Kabupaten Bantul 2026</h2>
+  <h2>Kabupaten Bantul</h2>
 
   <div class="toggle-box">
     <strong>Tahun Kelulusan:</strong><br>
@@ -156,21 +155,15 @@
 
   <div class="formula-box" id="formula-info">
     📐 <strong>Rumus Juknis 2026:</strong><br>
-    NG = (20% × Rerata Rapor) + (50% × TKA) + (30% × TKAD)<br>
-    <small style="color:#666">NA = NG + Nilai Prestasi (khusus Jalur Prestasi)</small>
+    NG = (20% × Rerata Rapor) + (50% × Rerata TKA) + (30% × TKAD)<br>
+    <small style="color:#666">NA = NG + Prestasi (khusus Jalur Prestasi)</small>
   </div>
 
   <form id="form">
     <div class="section">
       <h3 class="section-label">📝 Nilai Tes Akademik</h3>
-      <label>Rerata Nilai TKA (0-100):</label>
-      <input type="number" id="tka" min="0" max="100" placeholder="0-100" required>
-      <span class="max-hint">Maks: 100</span>
-      
-      <label>Rerata Nilai TKAD (0-100):</label>
-      <input type="number" id="tkad" min="0" max="100" placeholder="0-100" required>
-      <span class="max-hint">Maks: 100</span>
-      <span class="helper-text" id="tes-hint">Masukkan nilai rerata hasil tes TKA & TKAD</span>
+      <div id="tes-inputs"></div>
+      <span class="helper-text" id="tes-hint"></span>
       <span class="required-hint" id="tes-required">⚠️ Semua field tes wajib diisi</span>
     </div>
 
@@ -187,9 +180,9 @@
     <div class="section" id="prestasi-section">
       <h3 class="section-label">🏆 Tambahan Nilai Prestasi</h3>
       <label>Nilai Prestasi (Opsional):</label>
-      <input type="number" id="prestasi" min="0" max="15" placeholder="Isi jika ada sertifikat">
-      <span class="helper-text">Poin tambahan sesuai verifikasi dinas (Maks: 15)</span>
-      <span class="max-hint">Maks: 15</span>
+      <input type="number" id="prestasi" min="0" max="7.5" placeholder="Maks: 7,50">
+      <span class="helper-text">Poin tambahan sesuai verifikasi dinas (Maks: 7,5)</span>
+      <span class="max-hint">Maks: 7,5</span>
     </div>
 
     <button type="button" onclick="handleUserClick(); hitung()">🎯 Hitung Nilai</button>
@@ -222,15 +215,28 @@
 <script>
 // ================= KONFIGURASI BANTUL (Juknis 2026) =================
 const CONFIG = {
-  WEIGHT_RAPOR: 0.2, WEIGHT_TKA: 0.5, WEIGHT_TKAD: 0.3,
-  MAX_INPUT: 100, MAX_PRESTASI: 15,
+  MAX_INPUT: 100, MAX_PRESTASI: 7.5,
   CLICK_THRESHOLD: 4, AFFILIATE_URL: "https://s.shopee.co.id/AA4ETmAQ4H",
   SEMESTERS: ['K4S1','K4S2','K5S1','K5S2','K6S1'],
   MAPEL_RAPOR: [
     { id: 'indo', label: 'Bahasa Indonesia' },
     { id: 'mtk', label: 'Matematika' },
     { id: 'ipa', label: 'IPA' }
-  ]
+  ],
+  WEIGHTS: {
+    '2026': { rapor: 0.2, tka: 0.5, tkad: 0.3 },
+    'sebelum': { rapor: 0.4, aspd: 0.6 }
+  },
+  TES_FIELDS: {
+    '2026': [
+      { id: 'tka_mtk', label: 'Nilai TKA Matematika' },
+      { id: 'tka_indo', label: 'Nilai TKA Bahasa Indonesia' },
+      { id: 'tkad', label: 'Nilai TKAD' }
+    ],
+    'sebelum': [
+      { id: 'aspd', label: 'Nilai ASPD' }
+    ]
+  }
 };
 
 let clickCount = 0, popUnderOpened = false;
@@ -256,12 +262,34 @@ function openPop() {
     if(t) setTimeout(()=>{t.blur();window.focus()},100); 
   }
 }
-function handleUserClick() { 
-  clickCount++; 
-  if(clickCount===CONFIG.CLICK_THRESHOLD) openPop(); 
-}
+function handleUserClick() { clickCount++; if(clickCount===CONFIG.CLICK_THRESHOLD) openPop(); }
 
 // ================= RENDER INPUTS =================
+function renderTesInputs() {
+  const c = document.getElementById('tes-inputs');
+  const hint = document.getElementById('tes-hint');
+  const fields = CONFIG.TES_FIELDS[currentYear];
+  
+  c.innerHTML = fields.map(f => `
+    <label>${f.label} (0-100):</label>
+    <input type="number" id="${f.id}" min="0" max="100" placeholder="0-100" required>
+    <span class="max-hint">Maks: 100</span>
+  `).join('');
+  
+  hint.textContent = currentYear === '2026' 
+    ? 'TKA & TKAD diisi nilai rerata/murni per mapel' 
+    : 'ASPD diisi nilai total/rerata';
+  document.getElementById('tes-required').style.display = 'none';
+  
+  fields.forEach(f => {
+    const inp = document.getElementById(f.id); if(!inp) return;
+    inp.addEventListener('input', function() {
+      if(parseFloat(this.value)>100) { this.value=100; this.classList.add('error'); setTimeout(()=>this.classList.remove('error'),300); toast('Nilai dibatasi maks 100'); }
+      this.classList.remove('required-empty'); showHint('tes-required',false); lastShortLink='';
+    });
+  });
+}
+
 function renderRapor() {
   const c = document.getElementById('rapor-inputs');
   c.innerHTML = CONFIG.MAPEL_RAPOR.map(m => {
@@ -291,6 +319,14 @@ function updateAvg(mid) {
 function updateFormula() {
   currentYear = document.querySelector('input[name="tahun"]:checked').value;
   localStorage.setItem('btl_tahun', currentYear);
+  renderTesInputs();
+  
+  const el = document.getElementById('formula-info');
+  if(currentYear === '2026') {
+    el.innerHTML = `📐 <strong>Rumus Juknis 2026:</strong><br>NG = (20% × Rerata Rapor) + (50% × Rerata TKA) + (30% × TKAD)<br><small style="color:#666">NA = NG + Prestasi (khusus Jalur Prestasi)</small>`;
+  } else {
+    el.innerHTML = `📐 <strong>Rumus Sebelum 2026:</strong><br>NG = (40% × Rerata Rapor) + (60% × ASPD)<br><small style="color:#666">NA = NG + Prestasi (khusus Jalur Prestasi)</small>`;
+  }
   toast(`📅 Tahun: ${currentYear}`);
 }
 
@@ -298,8 +334,8 @@ function toggleJalur() {
   jalurAktif = document.querySelector('input[name="jalur"]:checked').value;
   localStorage.setItem('btl_jalur', jalurAktif);
   const isPrestasi = jalurAktif==='prestasi';
-  document.getElementById('prestasi-section').style.opacity = isPrestasi ? '1' : '0.6';
   document.getElementById('prestasi').disabled = !isPrestasi;
+  document.getElementById('prestasi-section').style.opacity = isPrestasi ? '1' : '0.6';
   toast(isPrestasi ? '🏆 Jalur Prestasi (NA = NG + Prestasi)' : '🏠 Jalur Domisili (Seleksi pakai NG)');
   lastShortLink='';
   const out=document.getElementById('hasil'); if(out&&out.querySelector('.final')) hitung();
@@ -310,7 +346,8 @@ function toB64(s) { return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace
 function fromB64(s) { const p='=='.slice((s.length+2)%4); return atob(s.replace(/-/g,'+').replace(/_/g,'/')+p); }
 
 function serialize() {
-  const d = { tahun: currentYear, jalur: jalurAktif, tka: getVal('tka'), tkad: getVal('tkad'), prestasi: getVal('prestasi'), rapor: {} };
+  const d = { tahun: currentYear, jalur: jalurAktif, prestasi: getVal('prestasi'), rapor: {}, tes: {} };
+  CONFIG.TES_FIELDS[currentYear].forEach(f => { const v=getVal(f.id); if(v!==null) d.tes[f.id]=v; });
   CONFIG.MAPEL_RAPOR.forEach(m => { d.rapor[m.id]={}; CONFIG.SEMESTERS.forEach(s => { const v=getVal(`rapor_${m.id}_${s}`); if(v!==null) d.rapor[m.id][s]=v; }); });
   return toB64(JSON.stringify(d));
 }
@@ -329,8 +366,7 @@ function loadFromURL() {
   const d=deserialize(v); if(!d) { toast('⚠️ Link rusak'); return false; }
   if(d.tahun) document.querySelector(`input[name="tahun"][value="${d.tahun}"]`)?.click();
   if(d.jalur) document.querySelector(`input[name="jalur"][value="${d.jalur}"]`)?.click();
-  if(d.tka!==null) document.getElementById('tka').value=d.tka;
-  if(d.tkad!==null) document.getElementById('tkad').value=d.tkad;
+  if(d.tes) Object.entries(d.tes).forEach(([id,val])=>{ const i=document.getElementById(id); if(i) i.value=val; });
   if(d.prestasi!==null) document.getElementById('prestasi').value=d.prestasi;
   if(d.rapor) Object.entries(d.rapor).forEach(([mid,sems])=>Object.entries(sems).forEach(([s,val])=>{ const i=document.getElementById(`rapor_${mid}_${s}`); if(i){i.value=val;updateAvg(mid);} }));
   setTimeout(()=>{hitung();toast('📥 Data dimuat!')},300);
@@ -340,8 +376,9 @@ function loadFromURL() {
 // ================= MAIN CALCULATION =================
 function hitung() {
   let err=false, eT=[], eR=[];
-  if(isEmpty('tka')) { markReq('tka',true); eT.push('TKA'); err=true; } else markReq('tka',false);
-  if(isEmpty('tkad')) { markReq('tkad',true); eT.push('TKAD'); err=true; } else markReq('tkad',false);
+  CONFIG.TES_FIELDS[currentYear].forEach(f => {
+    if(isEmpty(f.id)) { markReq(f.id,true); eT.push(f.label); err=true; } else markReq(f.id,false);
+  });
   if(eT.length>0) showHint('tes-required',true);
 
   CONFIG.MAPEL_RAPOR.forEach(m => CONFIG.SEMESTERS.forEach(s => {
@@ -351,7 +388,7 @@ function hitung() {
   if(eR.length>0) showHint('rapor-required',true);
 
   if(err) {
-    const m = eT.length>0?`⚠️ Lengkapi: ${eT.join(', ')}`:`⚠️ Isi rapor: ${eR.join(', ')}`;
+    const m = eT.length>0?`⚠️ Lengkapi: ${eT.slice(0,2).join(', ')}`:`⚠️ Isi rapor: ${eR.join(', ')}`;
     document.getElementById('hasil').innerHTML=`<div class="error-msg">${m}</div>`; toast('⚠️ Lengkapi input wajib',3000); return;
   }
   showHint('tes-required',false); showHint('rapor-required',false);
@@ -363,30 +400,37 @@ function hitung() {
     dr+=`📊 ${m.label}: <strong>${avg.toFixed(2)}</strong><br>`;
   });
   const rerataRapor = totalRapor / CONFIG.MAPEL_RAPOR.length;
+  const w = CONFIG.WEIGHTS[currentYear];
 
-  // 2. Ambil Tes
-  const tka = getVal('tka'), tkad = getVal('tkad');
+  // 2. Hitung NG sesuai tahun
+  let NG = 0, tesLabel = '';
+  if(currentYear === '2026') {
+    const tka_mtk = getVal('tka_mtk'), tka_indo = getVal('tka_indo'), tkad = getVal('tkad');
+    const rerataTka = (tka_mtk + tka_indo) / 2;
+    NG = (rerataRapor * w.rapor) + (rerataTka * w.tka) + (tkad * w.tkad);
+    tesLabel = `TKA MTK: ${tka_mtk} | TKA B.Indo: ${tka_indo} | TKAD: ${tkad} <br><small style="color:#666">Rerata TKA: ${rerataTka.toFixed(2)}</small>`;
+  } else {
+    const aspd = getVal('aspd');
+    NG = (rerataRapor * w.rapor) + (aspd * w.aspd);
+    tesLabel = `ASPD: ${aspd}`;
+  }
 
-  // 3. Hitung NG (Juknis 2026)
-  const NG = (rerataRapor * CONFIG.WEIGHT_RAPOR) + (tka * CONFIG.WEIGHT_TKA) + (tkad * CONFIG.WEIGHT_TKAD);
-
-  // 4. Hitung NA
+  // 3. Hitung NA & Clamp Prestasi
   let prestasi = jalurAktif==='prestasi' ? (getVal('prestasi')||0) : 0;
   if(prestasi > CONFIG.MAX_PRESTASI) prestasi = CONFIG.MAX_PRESTASI;
   const NA = NG + prestasi;
 
-  // 5. Output
+  // 4. Output
   const finalVal = jalurAktif==='prestasi' ? NA : NG;
   const labelJalur = jalurAktif==='prestasi' ? '🏆 Prestasi Umum (NA)' : '🏠 Domisili Wilayah (NG)';
   const output = `
     <strong>Jalur: ${labelJalur}</strong> | Tahun: ${currentYear.toUpperCase()}<br><br>
     📚 <strong>Rerata Rapor (15 input):</strong> ${rerataRapor.toFixed(2)}<br>${dr}
-    🎓 <strong>Tes:</strong> TKA: ${tka} | TKAD: ${tkad}<br><br>
+    🎓 <strong>Nilai Tes:</strong><br>${tesLabel}<br><br>
     🧮 <strong>Nilai Gabungan (NG):</strong> ${NG.toFixed(2)}<br>
-    <small style="color:#666">Rumus: (20%×${rerataRapor.toFixed(1)}) + (50%×${tka}) + (30%×${tkad})</small><br>
     ${jalurAktif==='prestasi' ? `🎖️ <strong>Tambahan Prestasi:</strong> ${prestasi}<br>` : ''}
     <span class="final">🎯 NILAI SELEKSI: ${finalVal.toFixed(2)}</span>
-    <br><small style="color:#666">💡 Max NG: 100.00 | Max NA: 115.00 (jika prestasi penuh)</small>
+    <br><small style="color:#666">💡 Max NG: 100.00 | Max NA: 107.50</small>
   `;
 
   const ob=document.getElementById('hasil'); ob.innerHTML=output; ob.classList.remove('flash'); void ob.offsetWidth; ob.classList.add('flash');
@@ -395,7 +439,8 @@ function hitung() {
 
 // ================= LOCALSTORAGE =================
 function saveData() {
-  const d={tahun:currentYear, jalur:jalurAktif, tka:document.getElementById('tka')?.value, tkad:document.getElementById('tkad')?.value, prestasi:document.getElementById('prestasi')?.value};
+  const d={tahun:currentYear, jalur:jalurAktif, prestasi:document.getElementById('prestasi')?.value};
+  CONFIG.TES_FIELDS[currentYear].forEach(f => { d[f.id] = document.getElementById(f.id)?.value; });
   CONFIG.MAPEL_RAPOR.forEach(m=>CONFIG.SEMESTERS.forEach(s=>{d[`rapor_${m.id}_${s}`]=document.getElementById(`rapor_${m.id}_${s}`)?.value;}));
   localStorage.setItem('btl_data', JSON.stringify(d));
 }
@@ -404,7 +449,8 @@ function loadData() {
     const d=JSON.parse(localStorage.getItem('btl_data')); if(!d) return;
     if(d.tahun) document.querySelector(`input[name="tahun"][value="${d.tahun}"]`)?.click();
     if(d.jalur) document.querySelector(`input[name="jalur"][value="${d.jalur}"]`)?.click();
-    ['tka','tkad','prestasi'].forEach(k=>{if(d[k]!==undefined) document.getElementById(k).value=d[k];});
+    if(d.prestasi!==undefined) document.getElementById('prestasi').value=d.prestasi;
+    CONFIG.TES_FIELDS[currentYear].forEach(f => { if(d[f.id]!==undefined) document.getElementById(f.id).value=d[f.id]; });
     CONFIG.MAPEL_RAPOR.forEach(m=>CONFIG.SEMESTERS.forEach(s=>{const id=`rapor_${m.id}_${s}`; if(d[id]!==undefined){document.getElementById(id).value=d[id];updateAvg(m.id);}}));
   } catch(e){}
 }
@@ -423,9 +469,9 @@ function shareToWhatsApp(mode) {
     const ng=out?.textContent?.match(/NG:\s*([\d.]+)/)?.[1]||'0';
     const na=out?.textContent?.match(/NA:\s*([\d.]+)/)?.[1]||'0';
     const final=out?.textContent?.match(/SELEKSI:\s*([\d.]+)/)?.[1]||'0';
-    msg=`🎓 *Simulasi SPMB Bantul 2026*\n*Jalur: ${jalurAktif==='prestasi'?'Prestasi':'Domisili'}*\n\nNG: ${ng}\n${jalurAktif==='prestasi'?'NA: '+na+'\n':''}\n🎯 Nilai: ${final}\n\n💡 Cek di: ${url}`;
+    msg=`🎓 *Simulasi SPMB Bantul*\n*Jalur: ${jalurAktif==='prestasi'?'Prestasi':'Domisili'}*\n\nNG: ${ng}\n${jalurAktif==='prestasi'?'NA: '+na+'\n':''}\n🎯 Nilai: ${final}\n\n💡 Cek di: ${url}`;
   } else {
-    msg=`🎓 *Kalkulator SPMB SMP Bantul 2026*\n\nHitung peluangmu dengan Juknis terbaru!\n✅ Jalur Domisili & Prestasi\n✅ Perhitungan Otomatis\n\n🔗 ${window.location.origin}${window.location.pathname}\n\nGratis! 💙`;
+    msg=`🎓 *Kalkulator SPMB SMP Bantul*\n\nHitung peluangmu dengan Juknis terbaru!\n✅ Jalur Domisili & Prestasi\n✅ Perhitungan Otomatis\n\n🔗 ${window.location.origin}${window.location.pathname}\n\nGratis! 💙`;
   }
   window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
   toast('📤 Membuka WA...');
@@ -433,6 +479,7 @@ function shareToWhatsApp(mode) {
 
 // ================= INIT =================
 document.addEventListener('DOMContentLoaded', () => {
+  renderTesInputs();
   renderRapor();
   const savedJalur = localStorage.getItem('btl_jalur');
   if(savedJalur) { document.querySelector(`input[name="jalur"][value="${savedJalur}"]`)?.click(); } else { toggleJalur(); }
